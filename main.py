@@ -1,40 +1,22 @@
-from flask import Flask
+from flask import Flask, request, redirect, render_template
+import cgi
+import os
+import jinja2
 
 app = Flask(__name__)
 app.config['DEBUG'] = True
 
-user_form = """
-    <style>
-        .error {{ color: red;}}
-    </style>
-    <h1>User Signup</h1>
-    <form method='POST'>
-        <label>Username
-            <input name="username" type="text" value='{username}' />
-        </label>
-        <p class="error">{username_error}</p>
-        <label>Password
-            <input name="password" type="text" value='{password}' />
-        </label>
-        <p class="error">{password_error}</p>
-        <label>Confirm Password
-            <input name="confirm_password" type="text" value={confirm_password} />
-        </label>
-        <p class="error">{confirm_error}</p>
-        <label>Email
-            <input name="email" type="text" value={email} />
-        </label>
-        <p class="error">{email_error}</p>
-        <input type="submit" value="Convert" />
-    </form>
-"""
+template_dir = os.path.join(os.path.dirname(__file__),
+    'templates')
+
+jinja_env = jinja2.Environment(
+    loader = jinja2.FileSystemLoader(template_dir))
+
 
 @app.route('/user-signup')
 def display_user_signup():
-    return user_form.format(username='', username_error='',
-    password='', password_error='',
-    confirm_password='', confirm_error='',
-    email='',email_error='',
-)
+    user_template= jinja_env.get_template('user_form.html')
+    return user_template.render(username_error='')
 
 app.run()
+
